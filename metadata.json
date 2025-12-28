@@ -1,0 +1,7 @@
+{
+  "name": "Mizami_v1",
+  "description": "Gestion de courrier/chèques/documents intelligente et sécurisée. Analyse IA locale et archivage optimisé.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
