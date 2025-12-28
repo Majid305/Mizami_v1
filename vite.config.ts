@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   
   return {
     plugins: [react()],
-    // Crucial pour GitHub Pages car il rend tous les liens vers les JS/CSS relatifs.
+    // 'base: "./"' est essentiel pour GitHub Pages pour que les assets soient chargés relativement au dossier du dépôt
     base: './',
     define: {
       'process.env.API_KEY': JSON.stringify(env.VITE_API_KEY || env.API_KEY || "")
