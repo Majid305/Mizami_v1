@@ -7,7 +7,8 @@ export default defineConfig(({ mode }) => {
   
   return {
     plugins: [react()],
-    base: './', // Garantit que les assets sont chargés relativement à l'URL actuelle
+    // Utiliser base: './' permet de s'adapter à n'importe quel sous-dossier GitHub Pages
+    base: './',
     define: {
       'process.env.API_KEY': JSON.stringify(env.VITE_API_KEY || env.API_KEY || "")
     },
@@ -26,6 +27,10 @@ export default defineConfig(({ mode }) => {
           }
         }
       }
+    },
+    server: {
+      port: 3000,
+      host: true
     }
   }
 })
