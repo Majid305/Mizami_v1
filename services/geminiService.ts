@@ -1,8 +1,15 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { DocumentData, RejectedCheck, AvisData } from "../types";
 
 const MODEL_NAME = 'gemini-3-flash-preview';
+
+const getApiKey = () => {
+  const key = process.env.API_KEY;
+  if (!key) {
+    console.warn("Gemini API Key is missing. Please check your environment variables or GitHub Secrets.");
+  }
+  return key || "";
+};
 
 const documentSchema = {
   type: Type.OBJECT,
@@ -61,7 +68,8 @@ const avisSchema = {
 };
 
 export const analyzeDocument = async (base64Image: string, mimeType: string): Promise<Partial<DocumentData>> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   const response = await ai.models.generateContent({
     model: MODEL_NAME,
     contents: { parts: [{ text: "Analyse ce document administratif." }, { inlineData: { data: base64Image.split(',')[1], mimeType } }] },
@@ -71,7 +79,8 @@ export const analyzeDocument = async (base64Image: string, mimeType: string): Pr
 };
 
 export const generateResponseDraft = async (doc: Partial<DocumentData>, instructions: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = `En tant qu'assistant administratif expert, rédige un brouillon de réponse professionnelle ou une note d'action détaillée pour le document suivant :
   Objet : ${doc.objet}
   Émetteur : ${doc.emetteur}
@@ -90,7 +99,8 @@ export const generateResponseDraft = async (doc: Partial<DocumentData>, instruct
 };
 
 export const analyzeCheck = async (base64Image: string, mimeType: string): Promise<Partial<RejectedCheck>> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   const response = await ai.models.generateContent({
     model: MODEL_NAME,
     contents: { parts: [{ text: "Analyse ce chèque bancaire." }, { inlineData: { data: base64Image.split(',')[1], mimeType } }] },
@@ -100,7 +110,8 @@ export const analyzeCheck = async (base64Image: string, mimeType: string): Promi
 };
 
 export const analyzeIncident = async (base64Image: string | null, mimeType: string, text?: string): Promise<Partial<AvisData>> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   const parts: any[] = [{ text: "Analyse cet incident et génère une expertise complète incluant un Rapport d'Enquête structuré. Sois extrêmement professionnel, technique et précis sur l'analyse technique des causes. Remplis tous les champs du schéma JSON." }];
   if (base64Image) parts.push({ inlineData: { data: base64Image.split(',')[1], mimeType } });
   if (text) parts.push({ text: `Notes de l'expert terrain: ${text}` });
@@ -114,7 +125,8 @@ export const analyzeIncident = async (base64Image: string | null, mimeType: stri
 };
 
 export const generateReportSynthesis = async (documents: DocumentData[], period: string, type: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  const ai = new GoogleGenAI({ apiKey });
   const docSummaries = documents.map(d => `- ${d.date_document}: ${d.objet} (${d.type_objet}). Résumé: ${d.resume}`).join('\n');
   
   const prompt = `Génère une synthèse professionnelle pour un rapport d'audit administratif.
